@@ -1,11 +1,30 @@
 # Docker Template Fields for Unraid
 
-Two small conveniences for the fields of a Docker template, on the **Add/Edit Container** page (and in the Community Apps install popup):
+Drag to reorder the fields of a Docker template, and switch a field off without deleting it.
 
-1. **Drag to reorder.** Every Path, Port, Variable, Label and Device row gets a drag handle. The order you leave them in is the order saved in the template. The handle also answers the up and down arrow keys.
-2. **Switch a field off.** Every row gets an on/off switch. A disabled field stays in the template (and keeps its value), but is left out of the container when it is created or updated. Handy for testing: flip a port or variable off, apply, flip it back on later, instead of deleting and re-typing it.
+It adds a **drag handle** and an **on/off switch** to every Path, Port, Variable, Label and Device row on Unraid's **Add/Edit Container** page. That includes the page you get when you install an app from Community Apps.
 
-> **Status:** tested on an Unraid 7.4.0-beta.2 server (drag, switch, Apply on an existing container: the disabled variable stayed in the template and was left out of the recreated container), against a copy of the Add Container page's row code in a browser, and against a copy of Unraid's `docker create` builder. Please open an issue if anything looks off.
+## Why
+
+A Docker template is a list of fields, and Unraid gives you two ways to change that list: edit a value, or delete the field. That gets awkward quickly:
+
+- **Testing means deleting.** To see how a container behaves without a variable, a port mapping or a path, you have to remove the field, apply, and later add it back and re-type its name, target and description. Community Apps templates often carry dozens of optional variables, so this happens a lot.
+- **Order is fixed.** Fields appear in the order the template author chose. If you want the ones you touch most at the top, there is no way to move them.
+
+With this plugin you flip a field off, apply, and flip it back on when you are done. The field keeps its value and stays in the template, but Unraid leaves it out of the container while it is off. Reordering is drag and drop, and what you leave is what gets saved.
+
+## What it does
+
+1. **Drag to reorder.** Grab a row by its grip (three lines) and drop it where you want it. Or focus the grip and press the up and down arrow keys. The order you leave the rows in is the order saved in the template.
+2. **Switch a field off.** Click the row's switch. The row dims and is tagged *disabled*. Press **Apply** as usual and the container is created without that field. A disabled field keeps its value, so switching it back on restores it.
+
+## Tested on
+
+- **Unraid 7.4.0-beta.2:** a development build of this plugin was used on a real container (`binhex-official-metube`): a variable was switched off and applied, the template kept it as disabled, and the recreated container had no such variable. The published `.plg` installs cleanly on the same server and loads the same files. Dragging and switching were also checked in a browser.
+- **Unraid 7.2 and 7.3:** *not tested.* 7.2 is declared as the minimum because the plugin relies on the current Add Container page and on the way Unraid loads plugin pages, but I have not run it there. If you try it on 7.2 or 7.3, please [open an issue](https://github.com/joshmans/unraid-docker-template-fields/issues) either way and I'll update this list.
+- **Automated:** the page script is run against a copy of the Add Container page's own row code, and the claim that Unraid ignores a disabled field is run against a copy of Unraid's `docker create` builder (see *Development*).
+
+Not yet tried by hand: Community Apps updates and "Update all" with a disabled field. They use the same builder, so they should skip it, but that is from reading Unraid's code, not from running it.
 
 ## Install
 
@@ -15,7 +34,7 @@ In Unraid, go to **Plugins → Install Plugin** and paste:
 https://raw.githubusercontent.com/joshmans/unraid-docker-template-fields/main/unraid-docker-template-fields.plg
 ```
 
-Requires Unraid 7.2 or newer. There is nothing to configure: open **Docker → Add Container** (or edit a container, or install an app from Community Apps) and the controls are in the left margin of every field. **Settings → Utilities → Docker Template Fields** can switch either feature off.
+Requires Unraid 7.2 or newer (see *Tested on*). There is nothing to configure: open **Docker → Add Container** (or edit a container, or install an app from Community Apps) and the controls are in the left margin of every field. **Settings → Utilities → Docker Template Fields** can switch either feature off.
 
 ## Using it
 
@@ -26,7 +45,7 @@ Requires Unraid 7.2 or newer. There is nothing to configure: open **Docker → A
 
 ## How a disabled field is stored
 
-The template keeps the entry, with `Disabled:` in front of its `Type`, for example `Type="Disabled:Port"`. Unraid builds the `docker create` command only from entries of type Path, Port, Label, Variable and Device, so a `Disabled:` entry is skipped, on Apply, on Update from Docker or Community Apps, and on "Update all". Nothing else in the template changes, and the page removes the prefix again when it loads the template, so its own edit dialog never sees it.
+The template keeps the entry, with `Disabled:` in front of its `Type`, for example `Type="Disabled:Port"`. Unraid builds the `docker create` command only from entries of type Path, Port, Label, Variable and Device, so a `Disabled:` entry is skipped. Applying, updating from Docker or Community Apps, and "Update all" all use that same builder. Nothing else in the template changes, and the page removes the prefix again when it loads the template, so its own edit dialog never sees it.
 
 If you uninstall the plugin, disabled fields stay in the template, inert, and show up as ordinary-looking rows whose type reads `Disabled:Port` etc. Edit the type back to `Port` to enable one without the plugin.
 
