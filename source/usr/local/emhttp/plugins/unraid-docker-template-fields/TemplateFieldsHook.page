@@ -1,0 +1,11 @@
+Menu="Buttons:99"
+Title="Docker Template Fields"
+Icon="arrows-v"
+Link="tf-hook"
+Cond="preg_match('/AddContainer|UpdateContainer/', $_SERVER['REQUEST_URI'])"
+Markdown="false"
+---
+<?PHP
+require_once "/usr/local/emhttp/plugins/unraid-docker-template-fields/include/hook.php";
+tf_inject();
+?>

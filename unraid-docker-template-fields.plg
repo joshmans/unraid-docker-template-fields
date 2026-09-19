@@ -1,0 +1,62 @@
+<?xml version='1.0' standalone='yes'?>
+<!DOCTYPE PLUGIN [
+ <!ENTITY name "unraid-docker-template-fields">
+ <!ENTITY author "joshmans">
+ <!ENTITY version "2026.09.19">
+ <!ENTITY gitURL "https://github.com/joshmans/unraid-docker-template-fields">
+ <!ENTITY pluginURL "&gitURL;/releases/download/&version;/&name;-&version;-noarch-1.txz">
+ <!ENTITY sha256 "96c242ec464ea598531916d11aee8e6aa12b9188efde04b6fd3a60dc0113f2e9">
+ <!ENTITY launch "Settings/TemplateFields">
+]>
+
+<PLUGIN name="&name;" Title="Docker Template Fields" author="&author;" version="&version;" pluginURL="&gitURL;/raw/main/&name;.plg" launch="&launch;" icon="arrows-v" min="7.2.0" support="&gitURL;/issues">
+
+<DESCRIPTION>
+Drag to reorder the fields of a Docker template, and switch a field off without deleting it. Works on the Add/Edit Container page, including when installing from Community Apps.
+</DESCRIPTION>
+
+<CHANGES><![CDATA[
+# Docker Template Fields
+
+## 2026.09.19
+
+First release.
+
+- Drag to reorder the Path, Port, Variable, Label and Device rows on the Add/Edit Container page, including when installing an app from Community Apps. The order you leave them in is the order saved in the template. Rows can also be moved with the up and down arrow keys while the handle is focused.
+- An on/off switch on every row. A disabled field stays in the template, but is left out of the container when it is created or updated, so you can test without deleting anything.
+- Settings > Utilities > Docker Template Fields can switch either feature off. With both off the plugin adds nothing to the page.
+]]></CHANGES>
+
+<FILE Name="/boot/config/plugins/&name;/&name;-&version;-noarch-1.txz" Run="upgradepkg --install-new">
+<URL>&pluginURL;</URL>
+<SHA256>&sha256;</SHA256>
+</FILE>
+
+<FILE Run="/bin/bash">
+<INLINE>
+mkdir -p /boot/config/plugins/&name;
+
+# upgradepkg keeps whatever modes the archive had, so set them here
+chown -R root:root /usr/local/emhttp/plugins/&name;
+chmod -R 755 /usr/local/emhttp/plugins/&name;
+find /usr/local/emhttp/plugins/&name; -type f -exec chmod 644 {} \;
+
+rm -f $(ls /boot/config/plugins/&name;/&name;-*.txz 2>/dev/null | grep -v "&version;")
+echo "Docker Template Fields &version; installed"
+</INLINE>
+</FILE>
+
+<FILE Run="/bin/bash" Method="remove">
+<INLINE>
+rm -f /boot/config/plugins/&name;/&name;-*.txz
+# Unraid does not forget the package on its own: without this, reinstalling the same
+# version before a reboot is skipped as "already installed" and installs nothing
+for pkg in /var/log/packages/&name;-*; do
+  [ -e "$pkg" ] &amp;&amp; removepkg "$(basename "$pkg")" >/dev/null 2>&amp;1
+done
+rm -rf /usr/local/emhttp/plugins/&name;
+# unraid-docker-template-fields.cfg (the two switches) is kept so a reinstall picks up where you left off
+</INLINE>
+</FILE>
+
+</PLUGIN>

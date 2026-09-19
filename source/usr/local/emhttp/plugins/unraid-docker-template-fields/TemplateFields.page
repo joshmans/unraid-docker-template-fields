@@ -1,0 +1,7 @@
+Menu="Utilities"
+Title="Docker Template Fields"
+Icon="arrows-v"
+Tag="arrows-v"
+Markdown="false"
+---
+<?PHP require_once "/usr/local/emhttp/plugins/unraid-docker-template-fields/include/settings.php"; ?>

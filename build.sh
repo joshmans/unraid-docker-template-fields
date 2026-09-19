@@ -1,0 +1,34 @@
+#!/bin/bash
+# ./build.sh [version]   builds packages/unraid-docker-template-fields-<version>-noarch-1.txz and stamps
+# unraid-docker-template-fields.plg with the version, SHA-256 and CHANGELOG.md
+set -e
+NAME=unraid-docker-template-fields
+VERSION="${1:-$(date +%Y.%m.%d)}"
+cd "$(dirname "$0")"
+
+rm -rf package-temp packages
+mkdir -p package-temp packages
+cp -R source/* package-temp/
+echo "$VERSION" > "package-temp/usr/local/emhttp/plugins/$NAME/VERSION"
+find package-temp -type d -exec chmod 755 {} \;
+find package-temp -type f -exec chmod 644 {} \;
+
+# COPYFILE_DISABLE keeps macOS from adding ._ files to the archive
+COPYFILE_DISABLE=1 tar -C package-temp -cJf "packages/$NAME-$VERSION-noarch-1.txz" usr
+rm -rf package-temp
+
+if command -v sha256sum >/dev/null; then SHA256=$(sha256sum "packages/$NAME-$VERSION-noarch-1.txz" | cut -d' ' -f1); else SHA256=$(shasum -a 256 "packages/$NAME-$VERSION-noarch-1.txz" | cut -d' ' -f1); fi
+
+# the plg ships the changelog; "]]>" is the one string that would end the CDATA early
+python3 - "$VERSION" "$SHA256" <<'PY'
+import re, sys
+version, sha256 = sys.argv[1:3]
+s = open('unraid-docker-template-fields.plg').read()
+log = open('CHANGELOG.md').read().replace(']]>', ']]]]><![CDATA[>')
+s = re.sub(r'<!ENTITY version "[^"]*">', f'<!ENTITY version "{version}">', s)
+s = re.sub(r'<!ENTITY sha256 "[^"]*">', f'<!ENTITY sha256 "{sha256}">', s)
+s = re.sub(r'(<CHANGES><!\[CDATA\[\n).*?(\n\]\]></CHANGES>)', lambda m: m.group(1) + log.strip() + m.group(2), s, flags=re.S)
+open('unraid-docker-template-fields.plg', 'w').write(s)
+PY
+python3 -c "import xml.etree.ElementTree as E; E.parse('unraid-docker-template-fields.plg')"
+echo "built packages/$NAME-$VERSION-noarch-1.txz (sha256 $SHA256)"

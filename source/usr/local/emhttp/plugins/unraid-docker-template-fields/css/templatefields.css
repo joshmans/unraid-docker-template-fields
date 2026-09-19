@@ -1,0 +1,81 @@
+/* Template Fields: controls in the left gutter of each config row on Add/Edit Container. */
+#configLocation > div[id^="ConfigNum"],
+#configLocationAdvanced > div[id^="ConfigNum"] {
+  position: relative;
+}
+
+.tf-controls {
+  position: absolute;
+  left: 6px;
+  top: 8px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1;
+}
+
+/* three grip lines drawn in CSS, so no icon font is needed */
+.tf-handle {
+  width: 14px;
+  height: 12px;
+  background: repeating-linear-gradient(to bottom, currentColor 0 2px, transparent 2px 5px);
+  background-clip: content-box;
+  cursor: grab;
+  opacity: .55;
+  padding: 3px 2px;
+  box-sizing: content-box;
+  border-radius: 3px;
+  outline-offset: 1px;
+}
+.tf-handle:hover, .tf-handle:focus { opacity: 1; }
+.tf-handle:active { cursor: grabbing; }
+
+/* a small on/off switch; it is a span, not an input, so the page's own row code never trips over it */
+.tf-switch {
+  position: relative;
+  display: inline-block;
+  width: 26px;
+  height: 14px;
+  border-radius: 7px;
+  background: rgba(128, 128, 128, .55);
+  cursor: pointer;
+  transition: background .15s;
+  outline-offset: 2px;
+}
+.tf-switch .tf-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left .15s;
+}
+.tf-switch[aria-checked="true"] { background: #ff8c2f; }
+.tf-switch[aria-checked="true"] .tf-knob { left: 14px; }
+
+/* disabled row: everything but the controls fades, and a tag says why */
+.tf-off > :not(.tf-controls) { opacity: .45; }
+.tf-off > .tf-controls::after {
+  content: "disabled";
+  font-size: 10px;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  opacity: .7;
+}
+
+/* drag placeholder */
+.tf-placeholder {
+  visibility: visible !important;
+  border: 2px dashed rgba(255, 140, 47, .7);
+  border-radius: 4px;
+  margin: 4px 0;
+  box-sizing: border-box;
+}
+.ui-sortable-helper {
+  background: rgba(128, 128, 128, .18);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .35);
+  border-radius: 4px;
+}
