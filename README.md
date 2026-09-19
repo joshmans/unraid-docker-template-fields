@@ -20,11 +20,11 @@ With this plugin you flip a field off, apply, and flip it back on when you are d
 
 ## Tested on
 
-- **Unraid 7.4.0-beta.2:** a development build of this plugin was used on a real container (`binhex-official-metube`): a variable was switched off and applied, the template kept it as disabled, and the recreated container had no such variable. The published `.plg` installs cleanly on the same server and loads the same files. Dragging and switching were also checked in a browser.
-- **Unraid 7.2 and 7.3:** *not tested.* 7.2 is declared as the minimum because the plugin relies on the current Add Container page and on the way Unraid loads plugin pages, but I have not run it there. If you try it on 7.2 or 7.3, please [open an issue](https://github.com/joshmans/unraid-docker-template-fields/issues) either way and I'll update this list.
+- **Unraid 7.2, 7.3 and 7.4.0-beta.2.** On 7.4.0-beta.2 a development build was used on a real container (`binhex-official-metube`): a variable was switched off and applied, the template kept it as disabled, and the recreated container had no such variable. It has also been used on 7.2 and 7.3. The published `.plg` installs cleanly and loads the same files.
+- **Community Apps updates and "Update all"** with a field switched off have been tried, and the disabled field stays out of the container.
 - **Automated:** the page script is run against a copy of the Add Container page's own row code, and the claim that Unraid ignores a disabled field is run against a copy of Unraid's `docker create` builder (see *Development*).
 
-Not yet tried by hand: Community Apps updates and "Update all" with a disabled field. They use the same builder, so they should skip it, but that is from reading Unraid's code, not from running it.
+If something behaves differently on your version, please [open an issue](https://github.com/joshmans/unraid-docker-template-fields/issues) with your Unraid version.
 
 ## Install
 
@@ -34,7 +34,7 @@ In Unraid, go to **Plugins → Install Plugin** and paste:
 https://raw.githubusercontent.com/joshmans/unraid-docker-template-fields/main/unraid-docker-template-fields.plg
 ```
 
-Requires Unraid 7.2 or newer (see *Tested on*). There is nothing to configure: open **Docker → Add Container** (or edit a container, or install an app from Community Apps) and the controls are in the left margin of every field. **Settings → Utilities → Docker Template Fields** can switch either feature off.
+Requires Unraid 7.2 or newer. There is nothing to configure: open **Docker → Add Container** (or edit a container, or install an app from Community Apps) and the controls are in the left margin of every field. **Settings → Utilities → Docker Template Fields** can switch either feature off.
 
 ## Using it
 
