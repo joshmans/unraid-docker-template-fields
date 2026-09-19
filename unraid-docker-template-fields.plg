@@ -4,8 +4,8 @@
  <!ENTITY author "joshmans">
  <!ENTITY version "2026.09.19">
  <!ENTITY gitURL "https://github.com/joshmans/unraid-docker-template-fields">
- <!ENTITY pluginURL "&gitURL;/releases/download/&version;/&name;-&version;-noarch-1.txz">
- <!ENTITY sha256 "96c242ec464ea598531916d11aee8e6aa12b9188efde04b6fd3a60dc0113f2e9">
+ <!ENTITY pluginURL "&gitURL;/releases/download/&version;/&name;-&version;.txz">
+ <!ENTITY sha256 "fbb8d2159b28889234a29c3db55d9174e1598d4c89e728563255697925b43d4a">
  <!ENTITY launch "Settings/TemplateFields">
 ]>
 
@@ -27,7 +27,7 @@ First release.
 - Settings > Utilities > Docker Template Fields can switch either feature off. With both off the plugin adds nothing to the page.
 ]]></CHANGES>
 
-<FILE Name="/boot/config/plugins/&name;/&name;-&version;-noarch-1.txz" Run="upgradepkg --install-new">
+<FILE Name="/boot/config/plugins/&name;/&name;-&version;.txz" Run="upgradepkg --install-new">
 <URL>&pluginURL;</URL>
 <SHA256>&sha256;</SHA256>
 </FILE>
