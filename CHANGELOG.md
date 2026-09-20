@@ -1,5 +1,9 @@
 # Docker Template Fields
 
+## 2026.09.20
+
+- The plugin now names the same update URL that its Community Apps listing uses (raw.githubusercontent.com), so Community Apps recognises an installed copy and shows it as installed. No other change.
+
 ## 2026.09.19
 
 First release.

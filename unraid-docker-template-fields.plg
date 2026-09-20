@@ -2,14 +2,15 @@
 <!DOCTYPE PLUGIN [
  <!ENTITY name "unraid-docker-template-fields">
  <!ENTITY author "joshmans">
- <!ENTITY version "2026.09.19">
+ <!ENTITY version "2026.09.20">
  <!ENTITY gitURL "https://github.com/joshmans/unraid-docker-template-fields">
  <!ENTITY pluginURL "&gitURL;/releases/download/&version;/&name;-&version;.txz">
- <!ENTITY sha256 "fbb8d2159b28889234a29c3db55d9174e1598d4c89e728563255697925b43d4a">
+ <!ENTITY plgURL "https://raw.githubusercontent.com/joshmans/unraid-docker-template-fields/main/unraid-docker-template-fields.plg">
+ <!ENTITY sha256 "c7b0e0b0652f7d59f006fe9b6ebd62b8528e4b8b953cd0892300ee743ff72b8f">
  <!ENTITY launch "Settings/TemplateFields">
 ]>
 
-<PLUGIN name="&name;" Title="Docker Template Fields" author="&author;" version="&version;" pluginURL="&gitURL;/raw/main/&name;.plg" launch="&launch;" icon="arrows-v" min="7.2.0" support="&gitURL;/issues">
+<PLUGIN name="&name;" Title="Docker Template Fields" author="&author;" version="&version;" pluginURL="&plgURL;" launch="&launch;" icon="arrows-v" min="7.2.0" support="&gitURL;/issues">
 
 <DESCRIPTION>
 Drag to reorder the fields of a Docker template, and switch a field off without deleting it. Works on the Add/Edit Container page, including when installing from Community Apps.
@@ -17,6 +18,10 @@ Drag to reorder the fields of a Docker template, and switch a field off without 
 
 <CHANGES><![CDATA[
 # Docker Template Fields
+
+## 2026.09.20
+
+- The plugin now names the same update URL that its Community Apps listing uses (raw.githubusercontent.com), so Community Apps recognises an installed copy and shows it as installed. No other change.
 
 ## 2026.09.19
 
