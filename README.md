@@ -64,7 +64,7 @@ tests/harness/serve.sh          # mock Add Container page on http://127.0.0.1:87
 ./build.sh 2026.09.20           # build packages/*.txz and stamp unraid-docker-template-fields.plg
 ```
 
-Every rebuild that is installed on a box needs a new version (a letter suffix is fine, e.g. `2026.09.19b`): Slackware's `upgradepkg` skips a package whose name and version are already installed. Release by committing the stamped `.plg` and uploading the exact built `.txz` to a GitHub release whose tag equals the version.
+Every rebuild that is installed on a box needs a new version (a letter suffix is fine, e.g. `2026.09.19b`): Unraid only offers an update when the `.plg` version changes, and it caches the downloaded `.txz` under a versioned filename. The package is installed with `installpkg` after the older version is removed, not `upgradepkg`, because `upgradepkg` derives the package name `unraid-docker` from `name-version.txz` and would skip the install whenever another `unraid-docker-*` package is installed. Release by committing the stamped `.plg` and uploading the exact built `.txz` to a GitHub release whose tag equals the version.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for how it hooks into Unraid.
 

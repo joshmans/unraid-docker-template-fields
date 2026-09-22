@@ -32,7 +32,22 @@ First release.
 - Settings > Utilities > Docker Template Fields can switch either feature off. With both off the plugin adds nothing to the page.
 ]]></CHANGES>
 
-<FILE Name="/boot/config/plugins/&name;/&name;-&version;.txz" Run="upgradepkg --install-new">
+<!-- installpkg, not upgradepkg: upgradepkg derives a package's name by stripping the last three
+     dash fields (Slackware's name-version-arch-build), and name-version.txz derives to
+     "unraid-docker". Any other installed unraid-docker-* package then counts as the old version of
+     this one, and the install is skipped as "newer version already installed" (this broke
+     rizowski/unraid-docker-folders#15). Nothing is matched by name, so older versions of this
+     plugin are removed explicitly first. -->
+<FILE Run="/bin/bash">
+<INLINE>
+for pkg in /var/log/packages/&name;-*; do
+  if [ -e "$pkg" ]; then removepkg "$(basename "$pkg")" >/dev/null 2>&amp;1; fi
+done
+exit 0
+</INLINE>
+</FILE>
+
+<FILE Name="/boot/config/plugins/&name;/&name;-&version;.txz" Run="installpkg">
 <URL>&pluginURL;</URL>
 <SHA256>&sha256;</SHA256>
 </FILE>
@@ -41,7 +56,7 @@ First release.
 <INLINE>
 mkdir -p /boot/config/plugins/&name;
 
-# upgradepkg keeps whatever modes the archive had, so set them here
+# installpkg keeps whatever modes the archive had, so set them here
 chown -R root:root /usr/local/emhttp/plugins/&name;
 chmod -R 755 /usr/local/emhttp/plugins/&name;
 find /usr/local/emhttp/plugins/&name; -type f -exec chmod 644 {} \;
