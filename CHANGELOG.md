@@ -1,5 +1,9 @@
 # Docker Template Fields
 
+## 2026.09.25
+
+- Fixed installing this plugin removing another plugin's package. Slackware's `upgradepkg` reduced this package's name to `unraid-docker`, the same name it reduces `unraid-docker-folders-modern` to, so at every boot this plugin's install replaced (and so removed) Docker Folders Modern. The package is now installed with `installpkg` after removing only this plugin's own older version. The fix was already in the source, but 2026.09.20 was released without it, so installed copies never received it: this version is what delivers it.
+
 ## 2026.09.20
 
 - The plugin now names the same update URL that its Community Apps listing uses (raw.githubusercontent.com), so Community Apps recognises an installed copy and shows it as installed. No other change.
