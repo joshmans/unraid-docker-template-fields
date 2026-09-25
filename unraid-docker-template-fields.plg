@@ -2,11 +2,11 @@
 <!DOCTYPE PLUGIN [
  <!ENTITY name "unraid-docker-template-fields">
  <!ENTITY author "joshmans">
- <!ENTITY version "2026.09.20">
+ <!ENTITY version "2026.09.25">
  <!ENTITY gitURL "https://github.com/joshmans/unraid-docker-template-fields">
  <!ENTITY pluginURL "&gitURL;/releases/download/&version;/&name;-&version;.txz">
  <!ENTITY plgURL "https://raw.githubusercontent.com/joshmans/unraid-docker-template-fields/main/unraid-docker-template-fields.plg">
- <!ENTITY sha256 "c7b0e0b0652f7d59f006fe9b6ebd62b8528e4b8b953cd0892300ee743ff72b8f">
+ <!ENTITY sha256 "414ef0dca3d5dade4739d3bf7a5c8bf4698fc53118e494ff9c7ec4d0bf3b0ff7">
  <!ENTITY launch "Settings/TemplateFields">
 ]>
 
@@ -18,6 +18,10 @@ Drag to reorder the fields of a Docker template, and switch a field off without 
 
 <CHANGES><![CDATA[
 # Docker Template Fields
+
+## 2026.09.25
+
+- Fixed installing this plugin removing another plugin's package. Slackware's `upgradepkg` reduced this package's name to `unraid-docker`, the same name it reduces `unraid-docker-folders-modern` to, so at every boot this plugin's install replaced (and so removed) Docker Folders Modern. The package is now installed with `installpkg` after removing only this plugin's own older version. The fix was already in the source, but 2026.09.20 was released without it, so installed copies never received it: this version is what delivers it.
 
 ## 2026.09.20
 
