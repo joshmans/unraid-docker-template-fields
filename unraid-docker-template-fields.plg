@@ -2,11 +2,11 @@
 <!DOCTYPE PLUGIN [
  <!ENTITY name "unraid-docker-template-fields">
  <!ENTITY author "joshmans">
- <!ENTITY version "2026.09.25">
+ <!ENTITY version "2026.11.24">
  <!ENTITY gitURL "https://github.com/joshmans/unraid-docker-template-fields">
  <!ENTITY pluginURL "&gitURL;/releases/download/&version;/&name;-&version;.txz">
  <!ENTITY plgURL "https://raw.githubusercontent.com/joshmans/unraid-docker-template-fields/main/unraid-docker-template-fields.plg">
- <!ENTITY sha256 "414ef0dca3d5dade4739d3bf7a5c8bf4698fc53118e494ff9c7ec4d0bf3b0ff7">
+ <!ENTITY sha256 "a72bdcb58e2cbcc2114e904af49b76755dcb0e06489f8df008dbf467fe38b8cc">
  <!ENTITY launch "Settings/TemplateFields">
 ]>
 
@@ -18,6 +18,10 @@ Drag to reorder the fields of a Docker template, and switch a field off without 
 
 <CHANGES><![CDATA[
 # Docker Template Fields
+
+## 2026.11.24
+
+- **Rows can now be moved between "Show more settings" and the main list.** Drag a row's grip from one list into the other, or press the up or down arrow key at the end of a list to carry the row across (the other list has to be open). The row's Display is changed to match (Always or Advanced, keeping any "Hide Buttons" setting), so it is saved that way and stays put the next time you open the template. Before, a row could only move within the list it started in, so important rows that Unraid had placed under "Show more settings" were stuck there (reported by kintrupf).
 
 ## 2026.09.25
 
