@@ -83,7 +83,62 @@
     });
   }).then(function () {
     return tick(function () {
-      check('rows do not cross from the basic list into the advanced list', $('#configLocation').children('div[id^=ConfigNum]').length === 3 && names().indexOf('Config') === 2, names());
+      var disp = snapshot().getAll('confDisplay[]');
+      check('arrow down on the last row of the basic list moves it into the open advanced list',
+        $('#configLocationAdvanced').children('div[id^=ConfigNum]').first().attr('id') === 'ConfigNum' + ID.config && $('#configLocation').children('div[id^=ConfigNum]').length === 2, names());
+      check('the row that crossed was given Display advanced (input and class)', JSON.stringify(disp) === JSON.stringify(['always', 'always', 'advanced', 'advanced', 'advanced', 'advanced']) && row(ID.config).hasClass('config_advanced') && !row(ID.config).hasClass('config_always'), disp);
+      check('crossing lists leaves the saved order unchanged', names().join() === 'Debug port,WebUI,Config,TZ,Mode,Tag', names());
+      $('#ConfigNum' + ID.config + ' .tf-handle').trigger($.Event('keydown', { key: 'ArrowUp' }));
+    });
+  }).then(function () {
+    return tick(function () {
+      check('arrow up on the first row of the advanced list moves it back to the end of the basic list', $('#configLocation').children('div[id^=ConfigNum]').last().attr('id') === 'ConfigNum' + ID.config && snapshot().getAll('confDisplay[]')[2] === 'always', snapshot().getAll('confDisplay[]'));
+      $('#configLocationAdvanced').hide();
+      $('#ConfigNum' + ID.config + ' .tf-handle').trigger($.Event('keydown', { key: 'ArrowDown' }));
+    });
+  }).then(function () {
+    return tick(function () {
+      check('rows do not cross into a collapsed advanced list', $('#configLocation').children('div[id^=ConfigNum]').last().attr('id') === 'ConfigNum' + ID.config && snapshot().getAll('confDisplay[]')[2] === 'always');
+      $('#configLocationAdvanced').show();
+      // a -hide Display keeps its suffix when the row changes list (TZ is advanced; make it advanced-hide first)
+      $('#ConfigNum' + ID.tz + ' input[name="confDisplay[]"]').val('advanced-hide');
+      $('#ConfigNum' + ID.tz + ' .tf-handle').trigger($.Event('keydown', { key: 'ArrowUp' }));
+    });
+  }).then(function () {
+    return tick(function () {
+      // TZ is not first in the advanced list, so ArrowUp moved it within the list; send it to the top first, then across
+      $('#ConfigNum' + ID.tz).prependTo('#configLocationAdvanced');
+      $('#ConfigNum' + ID.tz + ' .tf-handle').trigger($.Event('keydown', { key: 'ArrowUp' }));
+    });
+  }).then(function () {
+    return tick(function () {
+      var d = snapshot().getAll('confDisplay[]'), n = names();
+      check('a -hide Display keeps its suffix across lists', d[n.indexOf('TZ')] === 'always-hide' && row(ID.tz).hasClass('config_always-hide'), d);
+      // put it back as it was
+      $('#ConfigNum' + ID.tz + ' .tf-handle').trigger($.Event('keydown', { key: 'ArrowDown' }));
+    });
+  }).then(function () {
+    return tick(function () {
+      check('and back again: advanced-hide', snapshot().getAll('confDisplay[]')[names().indexOf('TZ')] === 'advanced-hide');
+    });
+  }).then(function () {
+    // a real drag with the mouse, from the basic list into the advanced list (jQuery UI listens for mouse events)
+    function fire(el, type, x, y) { el.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, clientX: x, clientY: y, button: 0, view: window })); }
+    var h = $('#ConfigNum' + ID.web + ' .tf-handle')[0], hr = h.getBoundingClientRect();
+    var target = $('#ConfigNum' + ID.tag)[0].getBoundingClientRect();
+    var x = hr.left + hr.width / 2, y = hr.top + hr.height / 2;
+    fire(h, 'mousedown', x, y);
+    fire(document, 'mousemove', x, y + 5);
+    fire(document, 'mousemove', x, y + 20);
+    fire(document, 'mousemove', x, target.top + target.height / 2);
+    fire(document, 'mousemove', x, target.top + target.height / 2 + 2);
+    fire(document, 'mouseup', x, target.top + target.height / 2 + 2);
+    return tick(function () {
+      var inAdv = $('#configLocationAdvanced').children('#ConfigNum' + ID.web).length === 1;
+      check('a real drag from the basic list into the advanced list moves the row', inAdv, $('#configLocationAdvanced').children().toArray().map(function (r) { return r.id; }));
+      check('the dragged row now has Display advanced', snapshot().getAll('confDisplay[]')[names().indexOf('WebUI')] === 'advanced' && row(ID.web).hasClass('config_advanced'), snapshot().getAll('confDisplay[]'));
+      check('drop zones are removed after the drag', !$('#configLocation').hasClass('tf-dragging') && !$('#configLocationAdvanced').hasClass('tf-dragging'));
+      $('#ConfigNum' + ID.web).prependTo('#configLocation'); $('#ConfigNum' + ID.web).find('input[name="confDisplay[]"]').val('always').end().removeClass('config_advanced').addClass('config_always');
     });
   }).then(function () {
     // the edit dialog: a same-Display edit rewrites the row's contents

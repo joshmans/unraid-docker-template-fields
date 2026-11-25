@@ -7,7 +7,12 @@
  * Type. Unraid's `docker create` builder only acts on Path, Port, Label, Variable
  * and Device, so the entry stays in the template but is left out of the container.
  * The prefix is added on submit only and taken off again when the template is
- * loaded, so the page's own edit dialog never sees it. */
+ * loaded, so the page's own edit dialog never sees it.
+ *
+ * The page keeps rows in two lists: the always-visible one and the one behind "Show
+ * more settings". Which list a row belongs to is its Display (always / advanced, with an
+ * optional -hide suffix). Rows can be dragged (or moved with the arrow keys) from one list
+ * to the other; the row's Display is changed to match, so it is saved that way. */
 (function ($) {
   'use strict';
   if (!$ || window.__templateFields) return;
@@ -16,6 +21,8 @@
   var PREFIX = 'Disabled:';
   var LISTS = '#configLocation, #configLocationAdvanced';
   var ROW = 'div[id^="ConfigNum"]';
+  var BASIC = 'configLocation', ADVANCED = 'configLocationAdvanced';
+  var DISPLAY_CLASSES = 'config_always config_always-hide config_advanced config_advanced-hide';
   var off = {};        // row id -> true while that field is disabled
   var pendingOff = {}; // ids of rows the loaded template has disabled, until the page draws them
   window.__templateFields = { off: off, pending: pendingOff }; // read-only view, for tests
@@ -100,6 +107,19 @@
     changed();
   }
 
+  /* A row that has moved to the other list gets that list's Display, keeping any -hide suffix. The
+   * page's edit dialog reads the hidden input and the config_<Display> class to decide whether an edit
+   * keeps the row where it is, so both are kept in step. */
+  function syncDisplay(row) {
+    var $r = $(row), listId = $r.parent().attr('id');
+    if (listId !== BASIC && listId !== ADVANCED) return;
+    var $d = $r.find('input[name="confDisplay[]"]').first();
+    if (!$d.length) return;
+    var next = (listId === ADVANCED ? 'advanced' : 'always') + (/-hide$/.test($d.val()) ? '-hide' : '');
+    if ($d.val() !== next) $d.val(next);
+    $r.removeClass(DISPLAY_CLASSES).addClass('config_' + next);
+  }
+
   function initSortable() {
     if (!opts.reorder || !$.fn.sortable) return;
     $(LISTS).each(function () {
@@ -113,6 +133,12 @@
         cursor: 'grabbing',
         placeholder: 'tf-placeholder',
         forcePlaceholderSize: true,
+        connectWith: LISTS,
+        dropOnEmpty: true,
+        // an empty list has no height to drop onto, so give both a drop zone while a row is held
+        start: function () { $(LISTS).addClass('tf-dragging'); },
+        stop: function () { $(LISTS).removeClass('tf-dragging'); },
+        receive: function (e, ui) { syncDisplay(ui.item[0]); },
         update: changed
       });
     });
@@ -147,8 +173,17 @@
 
   function moveBy(row, dir) {
     var $row = $(row), $sib = dir < 0 ? $row.prevAll(ROW).first() : $row.nextAll(ROW).first();
-    if (!$sib.length) return;
-    if (dir < 0) $row.insertBefore($sib); else $row.insertAfter($sib);
+    if ($sib.length) {
+      if (dir < 0) $row.insertBefore($sib); else $row.insertAfter($sib);
+    } else {
+      // at the end of its list: carry on into the other list, if it is open (a row sent into a
+      // collapsed list would just disappear)
+      var here = $row.parent().attr('id');
+      if (dir < 0 && here === ADVANCED) $('#' + BASIC).append($row);
+      else if (dir > 0 && here === BASIC && $('#' + ADVANCED).is(':visible')) $('#' + ADVANCED).prepend($row);
+      else return;
+      syncDisplay(row);
+    }
     $row.children('.tf-controls').find('.tf-handle').trigger('focus');
     changed();
   }
