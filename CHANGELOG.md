@@ -1,5 +1,9 @@
 # Docker Template Fields
 
+## 2026.11.24
+
+- **Rows can now be moved between "Show more settings" and the main list.** Drag a row's grip from one list into the other, or press the up or down arrow key at the end of a list to carry the row across (the other list has to be open). The row's Display is changed to match (Always or Advanced, keeping any "Hide Buttons" setting), so it is saved that way and stays put the next time you open the template. Before, a row could only move within the list it started in, so important rows that Unraid had placed under "Show more settings" were stuck there (reported by kintrupf).
+
 ## 2026.09.25
 
 - Fixed installing this plugin removing another plugin's package. Slackware's `upgradepkg` reduced this package's name to `unraid-docker`, the same name it reduces `unraid-docker-folders-modern` to, so at every boot this plugin's install replaced (and so removed) Docker Folders Modern. The package is now installed with `installpkg` after removing only this plugin's own older version. The fix was already in the source, but 2026.09.20 was released without it, so installed copies never received it: this version is what delivers it.

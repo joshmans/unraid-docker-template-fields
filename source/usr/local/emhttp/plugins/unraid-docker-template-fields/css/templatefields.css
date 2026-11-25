@@ -79,3 +79,6 @@
   box-shadow: 0 4px 14px rgba(0, 0, 0, .35);
   border-radius: 4px;
 }
+
+/* while a row is held, an empty list still needs something to drop onto */
+.tf-dragging { min-height: 34px; }
